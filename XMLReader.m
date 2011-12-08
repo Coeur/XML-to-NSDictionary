@@ -9,7 +9,7 @@ NSString *const kXMLReaderTextNodeKey = @"text";
 @interface XMLReader (Internal)
 
 - (id)initWithError:(NSError *__autoreleasing *)error;
-- (NSDictionary *)objectWithData:(NSData *)data;
+- (NSMutableDictionary *)objectWithData:(NSData *)data;
 
 @end
 
@@ -68,23 +68,23 @@ NSString *const kXMLReaderTextNodeKey = @"text";
 #pragma mark -
 #pragma mark Public methods
 
-+ (NSDictionary *)dictionaryForPath:(NSString *)path error:(NSError *__autoreleasing *)errorPointer
++ (NSMutableDictionary *)dictionaryForPath:(NSString *)path error:(NSError *__autoreleasing *)errorPointer
 {
     NSString *fullpath = [[NSBundle bundleForClass:self] pathForResource:path ofType:@"xml"];
 	NSData *data = [[NSFileManager defaultManager] contentsAtPath:fullpath];
-    NSDictionary *rootDictionary = [XMLReader dictionaryForXMLData:data error:errorPointer];
+    NSMutableDictionary *rootDictionary = [XMLReader dictionaryForXMLData:data error:errorPointer];
     
 	return rootDictionary;
 }
 
-+ (NSDictionary *)dictionaryForXMLData:(NSData *)data error:(NSError *__autoreleasing *)error
++ (NSMutableDictionary *)dictionaryForXMLData:(NSData *)data error:(NSError *__autoreleasing *)error
 {
     XMLReader *reader = [[XMLReader alloc] initWithError:error];
-    NSDictionary *rootDictionary = [reader objectWithData:data];    
+    NSMutableDictionary *rootDictionary = [reader objectWithData:data];    
     return rootDictionary;
 }
 
-+ (NSDictionary *)dictionaryForXMLString:(NSString *)string error:(NSError *__autoreleasing *)error
++ (NSMutableDictionary *)dictionaryForXMLString:(NSString *)string error:(NSError *__autoreleasing *)error
 {
 /*    NSData *data = [string dataUsingEncoding:NSUTF8StringEncoding];
     
@@ -115,7 +115,7 @@ NSString *const kXMLReaderTextNodeKey = @"text";
     return self;
 }
 
-- (NSDictionary *)objectWithData:(NSData *)data
+- (NSMutableDictionary *)objectWithData:(NSData *)data
 {
     // Clear out any old data
 
@@ -133,7 +133,7 @@ NSString *const kXMLReaderTextNodeKey = @"text";
     // Return the stack's root dictionary on success
     if (success)
     {
-        NSDictionary *resultDict = [dictionaryStack objectAtIndex:0];
+        NSMutableDictionary *resultDict = [dictionaryStack objectAtIndex:0];
         return resultDict;
     }
     
