@@ -12,9 +12,9 @@
     NSError *__autoreleasing *errorPointer;
 }
 
-+ (NSDictionary *)dictionaryForPath:(NSString *)path error:(NSError *__autoreleasing *)errorPointer;
-+ (NSDictionary *)dictionaryForXMLData:(NSData *)data error:(NSError *__autoreleasing *)errorPointer;
-+ (NSDictionary *)dictionaryForXMLString:(NSString *)string error:(NSError *__autoreleasing *)errorPointer;
++ (NSMutableDictionary *)dictionaryForPath:(NSString *)path error:(NSError *__autoreleasing *)errorPointer;
++ (NSMutableDictionary *)dictionaryForXMLData:(NSData *)data error:(NSError *__autoreleasing *)errorPointer;
++ (NSMutableDictionary *)dictionaryForXMLString:(NSString *)string error:(NSError *__autoreleasing *)errorPointer;
 
 @end
 
