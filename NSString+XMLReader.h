@@ -7,8 +7,8 @@
 
 @interface NSString (NSString_XMLReader)
 
--(NSDictionary *) dictionaryFromXML:(NSError**) error;
-+(NSDictionary *) dictionaryFromXML:(NSString*) xml error:(NSError**) error;
+-(NSDictionary *) dictionaryFromXML:(NSError *__autoreleasing *) error;
++(NSDictionary *) dictionaryFromXML:(NSString*) xml error:(NSError *__autoreleasing *) error;
 
 
 @end

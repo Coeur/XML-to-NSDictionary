@@ -8,7 +8,7 @@ NSString *const kXMLReaderTextNodeKey = @"text";
 
 @interface XMLReader (Internal)
 
-- (id)initWithError:(NSError **)error;
+- (id)initWithError:(NSError *__autoreleasing *)error;
 - (NSDictionary *)objectWithData:(NSData *)data;
 
 @end
@@ -68,7 +68,7 @@ NSString *const kXMLReaderTextNodeKey = @"text";
 #pragma mark -
 #pragma mark Public methods
 
-+ (NSDictionary *)dictionaryForPath:(NSString *)path error:(NSError **)errorPointer
++ (NSDictionary *)dictionaryForPath:(NSString *)path error:(NSError *__autoreleasing *)errorPointer
 {
     NSString *fullpath = [[NSBundle bundleForClass:self] pathForResource:path ofType:@"xml"];
 	NSData *data = [[NSFileManager defaultManager] contentsAtPath:fullpath];
@@ -77,16 +77,14 @@ NSString *const kXMLReaderTextNodeKey = @"text";
 	return rootDictionary;
 }
 
-+ (NSDictionary *)dictionaryForXMLData:(NSData *)data error:(NSError **)error
++ (NSDictionary *)dictionaryForXMLData:(NSData *)data error:(NSError *__autoreleasing *)error
 {
     XMLReader *reader = [[XMLReader alloc] initWithError:error];
-    NSDictionary *rootDictionary = [reader objectWithData:data];
-    [reader release];
-    
+    NSDictionary *rootDictionary = [reader objectWithData:data];    
     return rootDictionary;
 }
 
-+ (NSDictionary *)dictionaryForXMLString:(NSString *)string error:(NSError **)error
++ (NSDictionary *)dictionaryForXMLString:(NSString *)string error:(NSError *__autoreleasing *)error
 {
 /*    NSData *data = [string dataUsingEncoding:NSUTF8StringEncoding];
     
@@ -106,32 +104,23 @@ NSString *const kXMLReaderTextNodeKey = @"text";
 #pragma mark -
 #pragma mark Parsing
 
-- (id)initWithError:(NSError **)error
+- (id)initWithError:(NSError *__autoreleasing *)error
 {
     if ((self = [super init]))
     {
         errorPointer = error;
+        dictionaryStack = [[NSMutableArray alloc]init];
     }
     
     return self;
 }
 
-- (void)dealloc
-{
-    [dictionaryStack release];
-    [textInProgress release];
-    
-    [super dealloc];
-}
-
 - (NSDictionary *)objectWithData:(NSData *)data
 {
     // Clear out any old data
-    [dictionaryStack release];
-    [textInProgress release];
-    
-    dictionaryStack = [[NSMutableArray alloc] init];
-    textInProgress = [[NSMutableString alloc] init];
+
+//    dictionaryStack = [[NSMutableArray alloc]init];
+    textInProgress = [NSMutableString stringWithString:@""];    
     
     // Initialize the stack with a fresh dictionary
     [dictionaryStack addObject:[NSMutableDictionary dictionary]];
@@ -139,14 +128,12 @@ NSString *const kXMLReaderTextNodeKey = @"text";
     // Parse the XML
     NSXMLParser *parser = [[NSXMLParser alloc] initWithData:data];
     parser.delegate = self;
-    BOOL success = [parser parse];
-	[parser release];
+    BOOL success =[parser parse];
     
     // Return the stack's root dictionary on success
     if (success)
     {
         NSDictionary *resultDict = [dictionaryStack objectAtIndex:0];
-        
         return resultDict;
     }
     
@@ -172,7 +159,7 @@ NSString *const kXMLReaderTextNodeKey = @"text";
     
     // If there's already an item for this key, it means we need to create an array
     id existingValue = [parentDict objectForKey:elementName];
-    
+
     if (existingValue)
     {
         NSMutableArray *array = nil;
@@ -209,7 +196,6 @@ NSString *const kXMLReaderTextNodeKey = @"text";
 {
     // Update the parent dict with text info
     NSMutableDictionary *dictInProgress = [dictionaryStack lastObject];
-    
     // Pop the current dict
     [dictionaryStack removeLastObject];
     
@@ -242,8 +228,7 @@ NSString *const kXMLReaderTextNodeKey = @"text";
         }
         
         // Reset the text
-        [textInProgress release];
-        textInProgress = [[NSMutableString alloc] init];
+        textInProgress = [NSMutableString stringWithString:@""];
     }
     
     // If there was no value for the tag, and no attribute, then remove it from the dictionary.
@@ -257,7 +242,10 @@ NSString *const kXMLReaderTextNodeKey = @"text";
 - (void)parser:(NSXMLParser *)parser foundCharacters:(NSString *)string
 {
     // Build the text value
-	[textInProgress appendString:[string stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]]];
+    if (![textInProgress isEqualToString:@""]){
+        [textInProgress appendString:[string stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]]];
+    }else
+        textInProgress = [NSMutableString stringWithString:[string stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]]];
 }
 
 - (void)parser:(NSXMLParser *)parser parseErrorOccurred:(NSError *)parseError

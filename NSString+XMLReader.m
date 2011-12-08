@@ -7,12 +7,12 @@
 #import "XMLReader.h"
 @implementation NSString (NSString_XMLReader)
 
--(NSDictionary *) dictionaryFromXML:(NSError**) error{
+-(NSDictionary *) dictionaryFromXML:(NSError *__autoreleasing *) error{
 	return [NSString dictionaryFromXML:self error:error];
 
 }
 
-+(NSDictionary *) dictionaryFromXML:(NSString*) xml error:(NSError**) error{
++(NSDictionary *) dictionaryFromXML:(NSString*) xml error:(NSError *__autoreleasing *) error{
 
 	return [XMLReader dictionaryForXMLString:xml error:error];
 }

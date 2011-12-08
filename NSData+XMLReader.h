@@ -9,7 +9,7 @@
 @interface NSData (NSData_XMLReader)
 
 
--(NSDictionary *) dictionaryFromXML:(NSError**) error;
-+(NSDictionary *) dictionaryFromXML:(NSData*) xml error:(NSError**) error;
+-(NSDictionary *) dictionaryFromXML:(NSError *__autoreleasing *) error;
++(NSDictionary *) dictionaryFromXML:(NSData*) xml error:(NSError *__autoreleasing *) error;
 
 @end
